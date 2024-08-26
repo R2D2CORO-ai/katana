@@ -16,7 +16,7 @@ var fss = require('fs');
 const { Pool } = require('pg')
 pool = new Pool({
     host: 'localhost',
-    user: 'katana',
+    user: 'postgres',
     password: 'ialab',
     database: 'katana',
 })
@@ -339,6 +339,7 @@ async function savingpic2(datauri, serial, sqty) {
         //console.log("Variables:"+serial+' - '+sqty+'');// temporal para ver que esta rebiendo 
 
         //C:/Users/mayra_ayala/Documents/AOI_TESLA/img/
+        
         //C:/Users/gdl3_mds/myapp/timsamples/
 
         let filePath = 'C:/Users/gdl3_mds/Documents/katana/katana_samples/' + serial + '';//Ruta de las carpetas por serial

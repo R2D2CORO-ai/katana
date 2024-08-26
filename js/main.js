@@ -67,19 +67,15 @@ let capturap10 = document.getElementById('imagen_p10')
 let capturap10tcx = capturap10.getContext('2d')
 
 let model = new cvstfjs.ObjectDetectionModel()
+
+let model1 = new cvstfjs.ClassificationModel();
 let model2 = new cvstfjs.ClassificationModel();
 let model3 = new cvstfjs.ClassificationModel();
-let model4 = new cvstfjs.ClassificationModel();
 
 //--------------------------------------- datos fecha ------------------------//
  //------------------------------- Muestra la hora local --------------------------------//
 const d= new Date();
 let hora = d.getHours(); //da el numero de la hora local ejemplo = 12, 13, 14
-//document.getElementById("demo").innerHTML = hora;
-//let hora = 1
-//console.log(hora)
-//------------------------------------
-// Get the current date and time
 let now = new Date();
 
 // Get the local time string formatted according to the browser's locale
@@ -88,24 +84,19 @@ let localTimeString = now.toLocaleTimeString();
 // Display the local time
 console.log(localTimeString); // Output: 11:04:29 AM/PM (assuming current time is 11:04:29 AM/PM)
 
-
-
 //------------------------------- Muestra dia de calendario -----------------------------//
 const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const dia = new Date();
 let day = weekday[dia.getDay()];
-//document.getElementById("demo").innerHTML = day;
 
 //------------------------------- Muestra dia del mes en calendario -----------------------------//
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const m = new Date();
 let month = months[m.getMonth()];
-//document.getElementById("mes").innerHTML = month;
 
 //------------------------------- Muestra el año  -----------------------------//
 const numero = new Date()
 let num = numero.getDate()
-//document.getElementById("num").innerHTML = num
 
 const año = new Date()
 let anio = año.getFullYear()
@@ -127,8 +118,8 @@ console.log('Semana:',semana);
 
 const fechaActual = new Date()
 const diaSemana = fechaActual.getDay()
-//console.log(diaSemana)
 
+//******************************* Carga Funciones al refrescar la pagina */
 window.onload = async function(){
     return new Promise(async resolve => {
         //divhidden()
@@ -150,15 +141,17 @@ async function startsequence(){
 //Cargar modelo al iniciar la pagina 
 async function loadmodel() {
 //----Segmentacion
-    await model.loadModelAsync('./segmentacion1/model.json') //C:\Users\gdl3_mds\Documents\katana\modelm\New folder
+    await model.loadModelAsync('./Entrenamiento-Segmentacion/segmentacion1/model.json') //C:\Users\gdl3_mds\Documents\katana\modelm\New folder
     console.log(model)
+
 //----Clasificacion
-    await model2.loadModelAsync('./clasificacion1/model.json');
-    console.log(model2)
+    await model1.loadModelAsync('./Entrenamientos-Clasificacion/clasificacion1/model.json'); //punto 1,2
+    console.log(model1)
     
-    await model3.loadModelAsync('./clasificacion2/model.json');
-    console.log(model3)
-    await model4.loadModelAsync('./clasificacion3/model.json');
+    await model2.loadModelAsync('./Entrenamientos-Clasificacion/clasificacion2/model.json'); //punto 3,4
+    console.log(model2)
+
+    await model3.loadModelAsync('./Entrenamientos-Clasificacion/clasificacion3/model.json'); //punto 5,6
     console.log(model3)
 
 }
@@ -178,6 +171,7 @@ image3.src = "/img/p20.png"
 //*************************Socket block */
 const socket = io();
 
+//*********************************** Datos recibidos de back-end  */
 socket.on('Sequence_start', function (infoplc) {
     if (infoplc != 0) {
         cadenadedatos = infoplc.toString()
@@ -234,30 +228,13 @@ function plc_response(boxpoint,boxpointcalis,resultadofinal) { //El Array boxpoi
         
         boxpointcalis =
         "&" + (pass1 == 1 ? 1 : 0)+ "&" + 
-         arryboth[1] + "$" + "NA" + "&" + blade1 + "&" + "1011" + "&" +
-         arryboth[2] + "$" + "NA" + "&" + blade2 + "&" + "1012" + "&" +
-         arryboth[3] + "$" + "NA" + "&" + blade3 + "&" + "2011" + "&" +
-         arryboth[4] + "$" + "NA" + "&" + blade4 + "&" + "2012" + "&" +
-         arryboth[5] + "$" + "NA" + "&" + blade5 + "&" + "3011" + "&" +
-         arryboth[6] + "$" + "NA" + "&" + blade6 + "&" + "3012"
+         arryboth[1] + "$" + "NA" + "&" + blade1 + "&" + "P1011" + "&" +
+         arryboth[2] + "$" + "NA" + "&" + blade2 + "&" + "P1012" + "&" +
+         arryboth[3] + "$" + "NA" + "&" + blade3 + "&" + "P2011" + "&" +
+         arryboth[4] + "$" + "NA" + "&" + blade4 + "&" + "P2012" + "&" +
+         arryboth[5] + "$" + "NA" + "&" + blade5 + "&" + "P3011" + "&" +
+         arryboth[6] + "$" + "NA" + "&" + blade6 + "&" + "P3012"
         
-
-        /*
-         "&" + (pass1 == 1 ? 1 : 0)+ "&" + 
-         arryboth[1] + "$" + "NA" + "&" + blade1 + "&" + "1011" + "&" +
-         arryboth[2] + "$" + "NA" + "&" + blade2 + "&" + "1012" + "&" +
-         arryboth[3] + "$" + "NA" + "&" + blade3 + "&" + "2011" + "&" +
-         arryboth[4] + "$" + "NA" + "&" + blade4 + "&" + "2012" + "&" +
-         arryboth[5] + "$" + "NA" + "&" + blade5 + "&" + "3011" + "&" +
-         arryboth[6] + "$" + "NA" + "&" + blade6 + "&" + "3012" 
-
-         "&" + (pass1 == 1 ? 1 : 0)+ "&" + 
-        arryboth[1]+ "$" + arryboth[2] + "$" + "NA" + "&" + blade1 + "&" + "BLADE_A" +"&" +
-        arryboth[3]+ "$" + arryboth[4] + "$" + "NA" + "&" + blade2 + "&" + "BLADE_B" +"&" +
-        arryboth[5]+ "$" + arryboth[6] + "$" + "NA" + "&" + blade3 + "&" + "BLADE_C"
-
-        */
-
         boxpoint =
             "&P3011" + "," + boxpoint[1] +
             "&P3012" + "," + boxpoint[2] +
@@ -265,9 +242,7 @@ function plc_response(boxpoint,boxpointcalis,resultadofinal) { //El Array boxpoi
             "&P2012" + "," + boxpoint[4] +
             "&P1011" + "," + boxpoint[5] +
             "P1012" + "," + boxpoint[6] + "#"
-       
-        //Blade1 hace referencia a la evaluacion de ambos conectores
-    
+          
         console.log("Calis de nueva cadena: ", boxpointcalis)
         logsaving(boxpoint)
         socket.emit('plc_response', boxpointcalis)
@@ -283,55 +258,7 @@ function plc_response2(responsevalue){
     })
 }
 
-//************************************************************************************** Metricos*/
-
-//***********Canvas de grafica barras */ 
-/*const bar_ctx = document.getElementById('linea').getContext('2d');
-const bar = new Chart(bar_ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
-        datasets: [{
-            label: 'Yield x Day',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            x: {
-                grid: {
-                    display: false
-                }
-            },
-            y: {
-                beginAtZero: true,
-                grid: {
-                    display: false
-                }
-            }
-        }
-    }
-});*/
-
 /************Canvas de grafica lineal */
-
 async function iniciar2() {
     return new Promise(async resolve => {
         //variable = 15
@@ -391,8 +318,6 @@ async function grafictas(){
     return new Promise(async resolve => {
         const bardos_ctx = document.getElementById('bardos').getContext('2d');
         let PO1011 = 'P1011';let PO1012 = 'P1012';let PO2011 = 'P2011';let PO2012 = 'P2012';let PO3011 = 'P3011';let PO3012 = 'P3012'
-        
-
         bardos = new Chart(bardos_ctx, {
             type: 'bar',
             data: {
@@ -406,9 +331,6 @@ async function grafictas(){
                 }, ]
             },
             options: {
-                
-                   
-                        
                         scales: {
                             x: {
                                 grid: {
@@ -434,62 +356,7 @@ async function grafictas(){
 
 grafictas()
 
-
-
-/*
-let line_ctx = document.getElementById('linea').getContext('2d');
-let linea = new Chart(line_ctx, {
-    type: 'line',
-    data: {
-        labels: ['6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm'],
-        datasets: [{
-            label: 'Yield x Hr',
-            data: [12, 19, 3, 5, 4, 3, 12, 6, 3, 1, 8, 3, 2],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)',
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)',
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            x: {
-                grid: {
-                    display: false
-                }
-            },
-            y: {
-                beginAtZero: false,
-                grid: {
-                    display: false
-                }
-            }
-        }
-    }
-});*/
-
-//open_cam(1)
-//************************************************************************************** Secuencia de prueba */
-/*************Secuencia   */
+//********************************************** Secuencia de prueba */
 async function Sequence() {
     document.getElementById('boton').style.visibility = "hidden"
 console.log("soy serial "+serial)
@@ -503,16 +370,14 @@ console.log("soy serial "+serial)
         console.log("estoy en la camara.. "+point)
         canbughide()
         await captureimage(point)
-        await URIimage(fullimage, 1)
+        //await URIimage(fullimage, 1)
         await predict1(point)
         await recorta(point)
         await stopcam()
     } // Cierre de for puntos
-    
     await evaluaArray() // funcion se coloca fuera de for para evaluar toda la cadena
     eval2puntos()
     await plc_response(boxpoint)
-    
     if(resultado == true){
         renombra(serial)
     }
@@ -522,24 +387,22 @@ console.log("soy serial "+serial)
 //************************************************************************************** Funciones de procesamiento de imagenes */
 async function recorta(point) { // Recorte de canvas 
     return new Promise(async resolve => {
-
         switch (point) {
-
             case 0:
                 // imagen No1
                 // P3011
                 capturap30tcx.drawImage(fullimage, 8, 285, 1913, 483, 0, 0, 318, 90) // Ajuste de imagen Cropping y resize
                 //console.log("ya esta la imagen")
-                recortitoctx.drawImage(fullimage, coord1[0], coord1[1], coord1[2], coord1[3], 0, 0, recortitoctx.canvas.width, recortitoctx.canvas.height) // coordenada y tamaño de recorte en el canvas 
-                recortitoctx1.drawImage(fullimage, coord1[4], coord1[5], coord1[6], coord1[7], 0, 0, recortitoctx1.canvas.width, recortitoctx1.canvas.height)
-                boxShadow(point)
-                await mlinspector(recortito,coord1[0],0)
-                await URIimage(recortito, 0, statusf)
+                recortitoctx.drawImage(fullimage, coord1[0], coord1[1], coord1[2], coord1[3], 0, 0, recortitoctx.canvas.width, recortitoctx.canvas.height) // Coordenadas de Blade espada encontrada en segmentacion  
+                recortitoctx1.drawImage(fullimage, coord1[4], coord1[5], coord1[6], coord1[7], 0, 0, recortitoctx1.canvas.width, recortitoctx1.canvas.height)// Coordenadas de Blade espada encontrada en segmentacion  
+                boxShadow(point)//Sombra en recortes
+                await mlinspector(recortito,coord1[0],1) //Coordenadas de recorte y punto de referencia para entrenamiento
+                await URIimage(recortito, 0, statusf) //Guarda imagen de recorte 
                 console.log(typeof(coord1[0]))
                 //pointstatus(1, statusx)
                 allpoints(1, statusf)
                 evalseparate(1, statusf)
-                await mlinspector(recortito1,coord1[4],0)
+                await mlinspector(recortito1,coord1[4],1)
                 await URIimage(recortito1, 0, statusf)
                 //pointstatus(2, statusx)
                 allpoints(2, statusf)
@@ -552,12 +415,12 @@ async function recorta(point) { // Recorte de canvas
                 recortitoctx3.drawImage(fullimage, coord2[4], coord2[5], coord2[6], coord2[7], 0, 0, recortitoctx3.canvas.width, recortitoctx3.canvas.height)
                 capturap20tcx.drawImage(fullimage, 184, 315, 1739, 435, 0, 0, 321, 90)
                 boxShadow(point)
-                await mlinspector(recortito2,coord2[0],1)
+                await mlinspector(recortito2,coord2[0],2)
                 await URIimage(recortito2, 2, statusf)
                 //pointstatus(3, statusf)
                 allpoints(3, statusf)
                 evalseparate(3, statusf)
-                await mlinspector(recortito3,coord2[4],1)
+                await mlinspector(recortito3,coord2[4],2)
                 await URIimage(recortito3, 2, statusf)
                 //pointstatus(4, statusf)
                 allpoints(4, statusf)
@@ -569,12 +432,12 @@ async function recorta(point) { // Recorte de canvas
                 recortitoctx5.drawImage(fullimage, coord3[4], coord3[5], coord3[6], coord3[7], 0, 0, recortitoctx5.canvas.width, recortitoctx5.canvas.height)
                 capturap10tcx.drawImage(fullimage, 1, 243, 1916, 565, 0, 0, 321, 90)
                 boxShadow(point)
-                await mlinspector(recortito4,coord1[0],2)
+                await mlinspector(recortito4,coord1[0],3)
                 await URIimage(recortito4, 3, statusf)
                 //pointstatus(5, statusf)
                 allpoints(5, statusf)
                 evalseparate(5, statusf)
-                await mlinspector(recortito5,coord1[4],2)
+                await mlinspector(recortito5,coord1[4],3)
                 await URIimage(recortito5, 3, statusf)
                 //pointstatus(6, statusf)
                 allpoints(6, statusf)
@@ -884,9 +747,9 @@ function open_cam(point) {// Resolve de 2 segundos
     return new Promise(async resolve => {
         let camid
 
-        if (point == 0) { camid = "7ffccdccbbbe0654a537380185fea60d0ff762027dfc9fdbeb89e5aba82450b0" } // Camara 30
-        if (point == 1) { camid = "d3ddaf3314e361c0d6146cbf3feb76236f96aed23c471f0fd6f9b0a69158c955" } // Camara 10
-        if (point == 2) { camid = "fd63c0ff05ca4fd51bccae442604ff87324f0d88103c6983245ffcebfa4ca54d" } // Camara 20
+        if (point == 0) { camid = "551cef2ce5bf21b1833826e51f5a09191ff6161afed26068686c788e327a49a5" } // Camara 30
+        if (point == 1) { camid = "0e04c336b1e21a006a3a661f59d96409334500729719ce6522fb694a5603f1e5" } // Camara 10
+        if (point == 2) { camid = "9b63c777fcc7f79c808a837d0a1b92952ec6a022d8e47504ad72d7dbcc263b4f" } // Camara 20
         const vgaConstraints = {
 
             video: {
@@ -902,7 +765,7 @@ function open_cam(point) {// Resolve de 2 segundos
             console.log(err.name)
             //location.reload()
         })
-        setTimeout(function fire() { resolve('resolved'); }, 1000)
+        setTimeout(function fire() { resolve('resolved'); }, 500)
    
 })
 }
@@ -911,7 +774,7 @@ function captureimage() {// Resolve de 2 segundos
 
         fullimagectx.drawImage(video, 0, 0, fullimage.width, fullimage.height);
         //var dataURI = canvas.toDataURL('image/jpeg');
-        setTimeout(function fire(){resolve('resolved');},500);//Temporal para programacion de secuencia
+        setTimeout(function fire(){resolve('resolved');},1500);//Temporal para programacion de secuencia
         resolve('resolved')
     });
 }
@@ -934,7 +797,7 @@ function stopcam() {
           console.log("Camara no encontrada");
         }
     
-        setTimeout(() => resolve('resolved'), 500);
+        setTimeout(() => resolve('resolved'), 50);
       });
     }
 
@@ -982,14 +845,14 @@ async function predict1(point) {
     await highlightResults(predictions, point) //espera a esta funcion para verificar si tiene corto o no
 
 }
-let criterio = 0.000001
+let criterio = 0.0001
 async function highlightResults(predictions, punto) {
    
     for (let n = 0; n < predictions[0].length; n++) {
 
         // Check scores
         if (predictions[1][n] > criterio) {
-           
+           console.log(predictions[0])
             bboxLeft = (predictions[0][n][0] * fullimagectx.canvas.width) //900 es el Width de la imagen y hace match con el with del overlay
             bboxTop = (predictions[0][n][1] * fullimagectx.canvas.height) //540 es el Height de la imagen y hace match con el with del overlay
             bboxWidth = (predictions[0][n][2] * fullimagectx.canvas.width) - bboxLeft//800 en vez del video.width
@@ -1048,22 +911,22 @@ async function mlinspector(cut,array,pot) {
         resolve('resolved')
     })
 }
+
 async function call(cut,array,pot) {
-    //console.log(array)
-    
-    //const image = document.getElementById('canvasClen1');
     if(pot==1){
-        result = await model3.executeAsync(cut)
+        //PUNTO 1 DEL CASE 0 --- P1011 Y P1012
+        result = await model1.executeAsync(cut)  
     }
     else if(pot==2){
-        result = await model4.executeAsync(cut)
+        //PUNTO P2011 Y P2012
+        result = await model2.executeAsync(cut)  
     }
     else{
-        result = await model2.executeAsync(cut)
+        //PUNTO P3011 Y P3012
+        result = await model3.executeAsync(cut) 
     }
-    
+
     console.log(result)
-    //console.log(array!=null)
     falla = result[0][1]
     pasa = result[0][0]
 
@@ -1079,19 +942,7 @@ async function call(cut,array,pot) {
     }
 }
    
-   /*
-    if (pasa <= falla&&array!=null) { //Evalua el valor en la posicion 0 que da la redneuronal
-        statusf = 1;
-        console.log(statusf)
-    }
-    else {
-        statusf = 0;
-        console.log(statusf)
-    }
-
-}*/
-
-//---------------------------------------------------- Extraer informacion ---------------------------------//
+//*********************************************** Extraer informacion para graficos ****************************************//
 async function numsem(){
     if((diaSemana == 0 ||diaSemana == 1 ||diaSemana == 2 ||diaSemana == 3 ||diaSemana == 4 ||diaSemana == 5 ||diaSemana == 6 && (getweek(date)) == getweek(date))){
         await agrupardias('pass', 'Monday', semana)
@@ -1123,13 +974,8 @@ function agrupardias(statust,day,semana) {
 
 //Extraccion de datos
 socket.on('qtyD', function (resulday) {
-    //console.log(resulday)
     let datosday = resulday.result
-    //console.log(resulday)
     turno_pass_qtyD = parseInt(datosday.rows[0].count, 10)
-    //console.log(turno_pass_qtyD)
-    //console.log(parseInt(datosday.rows[0].count, 10))
-    //se mandan llamar las funciones de "funcionyield"
     yieldMonday(resulday)
     yieldTuesday(resulday)
     yieldWednesday(resulday)
@@ -1144,59 +990,16 @@ socket.on('qtyD', function (resulday) {
 
 //Extraccion de conteo 
 socket.on('qtytas', function (resultas){
-   // console.log(resultas)
     datostas= resultas.result
-    //console.log(datostas)
-    
     p1011fail=parseInt(datostas.rows[0].conteop1011, 10)//analiza una cadena para determinar si contiene un valor entero
     p1012fail=parseInt(datostas.rows[0].conteop1012, 10)
     p2011fail=parseInt(datostas.rows[0].conteop2011, 10)
     p2012fail=parseInt(datostas.rows[0].conteop2012, 10)
     p3011fail=parseInt(datostas.rows[0].conteop3011, 10)
     p3012fail=parseInt(datostas.rows[0].conteop3012, 10)
-    //console.log( p1011fail)
-    /*ta2fail=parseInt(datostas.rows[0].conteota2, 10)
-    ta3fail=parseInt(datostas.rows[0].conteota3, 10)
-    ta4fail=parseInt(datostas.rows[0].conteota4, 10)
-    ta5fail=parseInt(datostas.rows[0].conteota5, 10)
-    ta6fail=parseInt(datostas.rows[0].conteota6, 10)
-    ta7fail=parseInt(datostas.rows[0].conteota7, 10)
-    ta8fail=parseInt(datostas.rows[0].conteota8, 10)
-    ta9fail=parseInt(datostas.rows[0].conteota9, 10)
-    ta10fail=parseInt(datostas.rows[0].conteota10, 10)
-    ta11fail=parseInt(datostas.rows[0].conteota11, 10)
-    ta12fail=parseInt(datostas.rows[0].conteota12, 10)
-    ta13fail=parseInt(datostas.rows[0].conteota13, 10)
-    ta14fail=parseInt(datostas.rows[0].conteota14, 10)
-    ta15fail=parseInt(datostas.rows[0].conteota15, 10)
-    ta16fail=parseInt(datostas.rows[0].conteota16, 10)
-    ta17fail=parseInt(datostas.rows[0].conteota17, 10)
-    ta18fail=parseInt(datostas.rows[0].conteota18, 10)
-    ta19fail=parseInt(datostas.rows[0].conteota19, 10)
-    ta20fail=parseInt(datostas.rows[0].conteota20, 10)
-    ta21fail=parseInt(datostas.rows[0].conteota21, 10)
-    ta22fail=parseInt(datostas.rows[0].conteota22, 10)
-    ta23fail=parseInt(datostas.rows[0].conteota23, 10)
-    ta24fail=parseInt(datostas.rows[0].conteota24, 10)
-    ta25fail=parseInt(datostas.rows[0].conteota25, 10)
-    ta26fail=parseInt(datostas.rows[0].conteota26, 10)
-    */
     tasArry =[null,p1011fail,p1012fail, p2011fail,p2012fail,p3011fail,p3012fail]
-    //console.log(tasArry)
-    //console.log(ta1fail,ta2fail,ta3fail,ta4fail,ta5fail,ta6fail,ta7fail,ta8fail,ta9fail,ta10fail,ta11fail,ta12fail,ta13fail,ta14fail,ta15fail,ta16fail,ta17fail,ta18fail,ta19fail,ta20fail,ta21fail,ta22fail,ta23fail,ta24fail,ta25fail,ta26fail)
 
     bardos.data.datasets[resultas.P1011== 'fail', resultas.P1012=='fail', resultas.P2011=='fail', resultas.P2012=='fail',resultas.P3011=='fail',resultas.P3012=='fail' ? 0 : 1].data.push(p1011fail,p1012fail, p2011fail,p2012fail,p3011fail,p3012fail)//.data
     bardos.update()
-
-    /*if(ta1fail <= valmax ){
-        console.log("TA sin errores")
-    }*/
-    /*if(ta1fail >= valmax){
-        console.log("Alerta Revisar TA1 -->", ta1fail)
-    }
-    if(ta2fail >= valmax){
-        console.log("Alerta Revisar TA2 -->", ta2fail)
-    }*/
-   
 })
 
